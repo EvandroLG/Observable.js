@@ -37,4 +37,43 @@ export default class Observable {
       }
     });
   }
+
+  static concat(..._observables) {
+    return new Observable(observer => {
+      let observables = [..._observables];
+      let current = null;
+
+      let processObservable = () => {
+        if (!observable.length) {
+          observable.complete();
+          return;
+        }
+
+        let observable = observables.shift();
+
+        current = observable.subscribe({
+          next(value) {
+            observer.next(value);
+          },
+
+          error(error) {
+            observer.error(error);
+            current.unsubscribe();
+          },
+
+          complete() {
+            processObservable();
+          }
+        });
+      };
+
+      processObservable();
+
+      return {
+        unsubscribe() {
+          current.unsubscribe();
+        }
+      }
+    });
+  }
 }
