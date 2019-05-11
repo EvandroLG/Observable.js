@@ -7,6 +7,40 @@ export default class Observable {
     return this._subscribe(observer);
   }
 
+  retry(attempt) {
+    return new Observable(observer => {
+      let current = null;
+
+      const processRequest = (currentAttempt) => {
+        current = this.subscribe({
+          next(value) {
+            observer.next(value);
+          },
+
+          complete() {
+            observer.complete();
+          },
+
+          error(err) {
+            if (currentAttempt === 0) {
+              observer.error(err);
+            }
+
+            processRequest(attempt - 1);
+          }
+        });
+      };
+
+      processRequest(attempt);
+
+      return {
+        unsubscribe() {
+          current.unsubscribe();
+        }
+      }
+    });
+  }
+
   static timeout(time) {
     return new Observable(observer => {
       const handle = setTimeout(() => {
