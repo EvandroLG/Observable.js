@@ -72,6 +72,26 @@ export default class Observable {
     });
   }
 
+  static map(callback) {
+    return new Observable(observer => {
+      const subscription = this.subscribe({
+        next(value) {
+          observer.next(callback(value));
+        },
+
+        error(fail) {
+          observer.error(fail);
+        }
+      });
+
+      return {
+        unsubscribe() {
+          subscription.unsubscribe();
+        }
+      };
+    });
+  }
+
   static concat(..._observables) {
     return new Observable(observer => {
       let observables = [..._observables];
