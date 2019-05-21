@@ -70,4 +70,33 @@ describe('observable', () => {
       expect(clearTimeout).toHaveBeenCalled();
     });
   });
+
+  describe('map', () => {
+    it('should receive the new value on every change', () => {
+      function simulateChange(input, value) {
+        input.value = value;
+        input.dispatchEvent(new Event('change'));
+      }
+
+      document.body.innerHTML = `
+        <input type="text">
+      `;
+
+      const input = document.querySelector('input');
+      const changes = Observable.fromEvent(input, 'change');
+      const mockNext = jest.fn();
+      changes.map(e => e.target.value).subscribe({
+        next: mockNext,
+      });
+
+      const firstValue = 'javascript';
+      simulateChange(input, firstValue);
+      const secondValue = 'lua';
+      simulateChange(input, secondValue);
+
+      expect(mockNext).toHaveBeenCalledTimes(2);
+      expect(mockNext).toHaveBeenNthCalledWith(1, firstValue);
+      expect(mockNext).toHaveBeenNthCalledWith(2, secondValue);
+    });
+  });
 });
