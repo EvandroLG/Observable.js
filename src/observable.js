@@ -61,6 +61,28 @@ export default class Observable {
     });
   }
 
+  filter(callback) {
+    return new Observable(observer => {
+      const subscription = this.subscribe({
+        next(value) {
+          if (callback(value)) {
+            observer.next(value);
+          }
+        },
+
+        error(fail) {
+          observer.error(fail);
+        }
+      });
+    });
+
+    return {
+      unsubscribe() {
+        subscription.unsubscribe();
+      }
+    };
+  }
+
   static timeout(time) {
     return new Observable(observer => {
       const handle = setTimeout(() => {
