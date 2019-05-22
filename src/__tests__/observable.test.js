@@ -1,5 +1,10 @@
 import Observable from '../observable';
 
+function simulateChange(input, value) {
+  input.value = value;
+  input.dispatchEvent(new Event('change'));
+}
+
 describe('observable', () => {
   describe('fromEvent', () => {
     beforeEach(() => {
@@ -73,11 +78,6 @@ describe('observable', () => {
 
   describe('map', () => {
     it('should receive the new value on every change', () => {
-      function simulateChange(input, value) {
-        input.value = value;
-        input.dispatchEvent(new Event('change'));
-      }
-
       document.body.innerHTML = `
         <input type="text">
       `;
@@ -99,4 +99,29 @@ describe('observable', () => {
       expect(mockNext).toHaveBeenNthCalledWith(2, secondValue);
     });
   });
+
+  describe('filter', () => {
+    it('should', () => {
+      document.body.innerHTML = `
+        <input type="text">
+      `;
+
+      const input = document.querySelector('input');
+      const changes = Observable.fromEvent(input, 'change');
+      const mockNext = jest.fn();
+      const firstValue = 'javascript';
+
+      changes.filter(e => e.target.value === firstValue).subscribe({
+        next: mockNext,
+      });
+
+      simulateChange(input, firstValue);
+
+      const secondValue = 'lua';
+      simulateChange(input, secondValue);
+
+      expect(mockNext).toHaveBeenCalledTimes(1);
+    });
+  });
+
 });
