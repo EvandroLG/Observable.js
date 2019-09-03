@@ -21,7 +21,7 @@ describe('observable', () => {
       clicks.subscribe({
         next(value) {
           result = value;
-        }
+        },
       });
 
       button.click();
@@ -40,7 +40,7 @@ describe('observable', () => {
       clicks.subscribe({
         next(value) {
           result = value;
-        }
+        },
       });
 
       expect(result).toBeNull();
@@ -123,5 +123,4 @@ describe('observable', () => {
       expect(mockNext).toHaveBeenCalledTimes(1);
     });
   });
-
 });

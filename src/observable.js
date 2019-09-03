@@ -27,7 +27,7 @@ export default class Observable {
             }
 
             processRequest(attempt - 1);
-          }
+          },
         });
       };
 
@@ -36,8 +36,8 @@ export default class Observable {
       return {
         unsubscribe() {
           current.unsubscribe();
-        }
-      }
+        },
+      };
     });
   }
 
@@ -50,13 +50,13 @@ export default class Observable {
 
         error(fail) {
           observer.error(fail);
-        }
+        },
       });
 
       return {
         unsubscribe() {
           subscription.unsubscribe();
-        }
+        },
       };
     });
   }
@@ -72,14 +72,14 @@ export default class Observable {
 
         error(fail) {
           observer.error(fail);
-        }
+        },
       });
     });
 
     return {
       unsubscribe() {
         subscription.unsubscribe();
-      }
+      },
     };
   }
 
@@ -93,8 +93,8 @@ export default class Observable {
       return {
         unsubscribe() {
           clearTimeout(handle);
-        }
-      }
+        },
+      };
     });
   }
 
@@ -109,18 +109,18 @@ export default class Observable {
       return {
         unsubscribe() {
           dom.removeEventListener(eventName, handler);
-        }
-      }
+        },
+      };
     });
   }
 
 
   static concat(..._observables) {
     return new Observable(observer => {
-      let observables = [..._observables];
+      const observables = [..._observables];
       let current = null;
 
-      let processObservable = () => {
+      const processObservable = () => {
         if (!observable.length) {
           observable.complete();
           return;
@@ -140,7 +140,7 @@ export default class Observable {
 
           complete() {
             processObservable();
-          }
+          },
         });
       };
 
@@ -149,8 +149,8 @@ export default class Observable {
       return {
         unsubscribe() {
           current.unsubscribe();
-        }
-      }
+        },
+      };
     });
   }
 }
